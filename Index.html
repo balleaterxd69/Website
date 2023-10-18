@@ -1,0 +1,104 @@
+<html>
+<head>
+<style>
+#cube {
+  width: 100px;
+  height: 100px;
+  background: red;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#bubble {
+  width: 200px;
+  height: 80px;
+  background: white;
+  border: 2px solid black;
+  border-radius: 10px;
+  position: absolute;
+  left: calc(50% - 100px);
+  top: calc(50% - 140px);
+  display: none;
+}
+
+#text {
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  text-align: center;
+  line-height: 80px;
+}
+
+#pointer {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 20px solid white;
+  position: absolute;
+  left: calc(50% - 10px);
+  top: calc(50% - 60px);
+}
+</style>
+</head>
+<body>
+<div id="cube"></div>
+<div id="bubble">
+<div id="text">Don't get close to me!</div>
+<div id="pointer"></div>
+</div>
+<script>
+// Get the elements
+var cube = document.getElementById("cube");
+var bubble = document.getElementById("bubble");
+
+// Set a timeout to show the bubble after 20 seconds
+setTimeout(function() {
+    bubble.style.display = "block";
+},20000);
+
+// Set another timeout to hide the bubble after another second
+setTimeout(function() {
+    bubble.style.display = "none";
+},21000);
+
+// Add a mousemove event listener to the document
+document.addEventListener("mousemove", function(event) {
+    // Get the mouse coordinates
+    var mouseX = event.clientX;
+    var mouseY = event.clientY;
+
+    // Get the cube coordinates and dimensions
+    var cubeX = cube.offsetLeft + cube.offsetWidth /2;
+    var cubeY = cube.offsetTop + cube.offsetHeight /2;
+
+    // Calculate the distance between the mouse and the cube
+    var distance = Math.sqrt(Math.pow(mouseX - cubeX,2) + Math.pow(mouseY - cubeY,2));
+
+    // If the distance is less than a threshold, push the mouse away from the cube
+    if (distance <150) {
+        // Calculate the angle between the mouse and the cube
+        var angle = Math.atan2(mouseY - cubeY, mouseX - cubeX);
+
+        // Calculate the new mouse coordinates that are farther from the cube
+        var newMouseX = cubeX + Math.cos(angle) *150;
+        var newMouseY = cubeY + Math.sin(angle) *150;
+
+        // Move the mouse to the new coordinates
+        event.clientX = newMouseX;
+        event.clientY = newMouseY;
+
+        // Trigger a new mousemove event with the new coordinates
+        var newEvent = new MouseEvent("mousemove", {
+            clientX: newMouseX,
+            clientY: newMouseY,
+            bubbles: true,
+            cancelable: true
+        });
+        document.dispatchEvent(newEvent);
+    }
+});
+</script>
+</body>
+</html>
